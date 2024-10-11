@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Published Job Postings</title>
+    <link rel="icon" type="image/x-icon" href="ByteMinds.ico">
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f2f5;
+            color: #333;
+            padding: 20px;
+        }
+
+        h1 {
+            text-align: center;
+        }
+
+        .job {
+            background-color: #fff;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .job h3 {
+            margin: 0;
+        }
+
+        .job p {
+            margin: 5px 0;
+        }
+
+        .no-jobs {
+            text-align: center;
+            color: #777;
+            font-size: 1.2rem;
+        }
+    </style>
+</head>
+<body>
+    <h1>Published Job Postings</h1>
+    <div id="jobList"></div>
+
+    <script>
+        // Fetch published jobs from the backend
+        fetch('http://localhost:8080/api/published')
+            .then(response => response.json())
+            .then(data => {
+                const jobList = document.getElementById('jobList');
+                if (data.length === 0) {
+                    jobList.innerHTML = '<p class="no-jobs">No job postings available.</p>';
+                } else {
+                    data.forEach(job => {
+                        const jobDiv = document.createElement('div');
+                        jobDiv.classList.add('job');
+                        jobDiv.innerHTML = `
+                            <h3>${job.jobTitle}</h3>
+                            <p><strong>Job Title:</strong> ${job.jobTitle}</p>
+                            <p><strong>Location:</strong> ${job.jobLocation}</p>
+                            <p><strong>Description:</strong> ${job.jobDescription}</p>
+                            <p><strong>Department:</strong> ${job.department}</p>
+                            <p><strong>Employment Type:</strong> ${job.employmentType}</p>
+                            <p><strong>Salary:</strong> ${job.salaryRange}</p>
+                            <p><strong>Valid Till:</strong> ${job.applicationDeadline}</p>
+                            <p><strong>Required Qualifications:</strong> ${job.requiredQualifications}</p>
+                            <p><strong>Preferred Qualifications:</strong> ${job.preferredQualifications}</p>
+                            <p><strong>Responsibilities:</strong> ${job.responsibilities}</p>
+                        `;
+                        jobList.appendChild(jobDiv);
+                    });
+                }
+            })
+            .catch(error => {
+                console.error('Error fetching published jobs:', error);
+                const jobList = document.getElementById('jobList');
+                jobList.innerHTML = '<p class="no-jobs">Unable to load published job postings at this time.</p>';
+            });
+    </script>
+</body>
+</html>

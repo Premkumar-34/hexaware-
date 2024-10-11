@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Draft Job Postings</title>
+    <link rel="icon" type="image/x-icon" href="ByteMinds.ico">
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f2f5;
+            color: #333;
+            padding: 20px;
+        }
+
+        h1 {
+            text-align: center;
+        }
+
+        .job {
+            background-color: #fff;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .job h3 {
+            margin: 0;
+        }
+
+        .job p {
+            margin: 5px 0;
+        }
+
+        .no-drafts {
+            text-align: center;
+            color: #777;
+            font-size: 1.2rem;
+        }
+
+        .edit-form {
+            display: none;
+            background-color: #fff;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .edit-form input, .edit-form textarea, .edit-form select {
+            width: 100%;
+            margin: 5px 0;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        .edit-form button {
+            padding: 8px 12px;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .edit-form button.cancel {
+            background-color: #dc3545;
+        }
+
+        #loadingSpinner {
+            display: none;
+            text-align: center;
+            font-size: 1.2rem;
+        }
+    </style>
+</head>
+<body>
+    <h1>Draft Job Postings</h1>
+    <div id="loadingSpinner">Loading...</div>
+    <div id="jobList"></div>
+
+    <script>
+        document.getElementById('loadingSpinner').style.display = 'block';
+
+        // Fetch draft jobs from the backend
+        fetch('http://localhost:8080/api/drafts')
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('loadingSpinner').style.display = 'none';
+                const jobList = document.getElementById('jobList');
+                if (data.length === 0) {
+                    jobList.innerHTML = '<p class="no-drafts">No draft job postings available.</p>';
+                } else {
+                    data.forEach(job => {
+                        const jobDiv = document.createElement('div');
+                        jobDiv.classList.add('job');
+                        jobDiv.innerHTML = `
+                            <h3>${job.jobTitle}</h3>
+                            <p><strong>Job Title:</strong> ${job.jobTitle}</p>
+                            <p><strong>Location:</strong> ${job.jobLocation}</p>
+                            <p><strong>Description:</strong> ${job.jobDescription}</p>
+                            <p><strong>Department:</strong> ${job.department}</p>
+                            <p><strong>Employment Type:</strong> ${job.employmentType}</p>
+                            <p><strong>Salary:</strong> ${job.salaryRange}</p>
+                            <p><strong>Valid Till:</strong> ${job.applicationDeadline}</p>
+                            <p><strong>Required Qualifications:</strong> ${job.requiredQualifications}</p>
+                            <p><strong>Preferred Qualifications:</strong> ${job.preferredQualifications}</p>
+                            <p><strong>Responsibilities:</strong> ${job.responsibilities}</p>
+                            <p><strong>Status:</strong> ${job.status}</p>
+                            <button onclick="editJob(${job.id})">Edit</button>
+                            <button onclick="confirmDelete(${job.id})" class="delete-btn">Delete</button>
+                            <div id="editForm-${job.id}" class="edit-form">
+                                <input type="text" id="editTitle-${job.id}" value="${job.jobTitle}">
+                                <input type="text" id="editLocation-${job.id}" value="${job.jobLocation}">
+                                <textarea id="editDescription-${job.id}">${job.jobDescription}</textarea>
+                                <input type="text" id="editDepartment-${job.id}" value="${job.department}">
+                                <input type="text" id="editEmployment-${job.id}" value="${job.employmentType}">
+                                <input type="text" id="editSalary-${job.id}" value="${job.salaryRange}">
+                                <input type="date" id="editDeadline-${job.id}" value="${job.applicationDeadline}">
+                                <textarea id="editQualifications-${job.id}">${job.requiredQualifications}</textarea>
+                                <textarea id="editPreferred-${job.id}">${job.preferredQualifications}</textarea>
+                                <textarea id="editResponsibilities-${job.id}">${job.responsibilities}</textarea>
+                                <select id="editStatus-${job.id}" required>
+                                    <option value="draft" ${job.status === 'draft' ? 'selected' : ''}>Draft</option>
+                                    <option value="publish" ${job.status === 'publish' ? 'selected' : ''}>Publish</option>
+                                </select>
+                                <button onclick="saveJob(${job.id})">Save</button>
+                                <button class="cancel" onclick="cancelEdit(${job.id})">Cancel</button>
+                            </div>
+                        `;
+                        jobList.appendChild(jobDiv);
+                    });
+                }
+            })
+            .catch(error => {
+                document.getElementById('loadingSpinner').style.display = 'none';
+                const jobList = document.getElementById('jobList');
+                jobList.innerHTML = '<p class="no-drafts">Unable to load draft job postings at this time.</p>';
+                console.error('Error fetching draft jobs:', error);
+            });
+
+        function editJob(id) {
+            // Hide all other forms
+            document.querySelectorAll('.edit-form').forEach(form => form.style.display = 'none');
+            
+            // Show the selected form
+            const form = document.getElementById(`editForm-${id}`);
+            form.style.display = 'block';
+        }
+
+        function cancelEdit(id) {
+            const form = document.getElementById(`editForm-${id}`);
+            form.style.display = 'none';
+        }
+
+        function saveJob(id) {
+            const updatedJob = {
+                jobTitle: document.getElementById(`editTitle-${id}`).value,
+                jobLocation: document.getElementById(`editLocation-${id}`).value,
+                jobDescription: document.getElementById(`editDescription-${id}`).value,
+                department: document.getElementById(`editDepartment-${id}`).value,
+                employmentType: document.getElementById(`editEmployment-${id}`).value,
+                salaryRange: document.getElementById(`editSalary-${id}`).value,
+                applicationDeadline: document.getElementById(`editDeadline-${id}`).value,
+                requiredQualifications: document.getElementById(`editQualifications-${id}`).value,
+                preferredQualifications: document.getElementById(`editPreferred-${id}`).value,
+                responsibilities: document.getElementById(`editResponsibilities-${id}`).value,
+                status: document.getElementById(`editStatus-${id}`).value
+            };
+
+            fetch(`http://localhost:8080/api/updateJob/${id}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(updatedJob)
+            })
+            .then(response => {
+                if (response.ok) {
+                    alert('Job updated successfully!');
+                    location.reload(); // Reload the page to show updated job list
+                } else {
+                    alert('Error updating the job.');
+                }
+            })
+            .catch(error => {
+                console.error('Error updating job:', error);
+            });
+        }
+
+        function confirmDelete(id) {
+            if (confirm('Are you sure you want to delete this job?')) {
+                deleteJob(id);
+            }
+        }
+
+        function deleteJob(id) {
+            fetch(`http://localhost:8080/api/deleteJob/${id}`, {
+                method: 'DELETE',
+            })
+            .then(response => {
+                if (response.ok) {
+                    alert('Job deleted successfully!');
+                    location.reload(); // Refresh the page after deleting
+                } else {
+                    alert('Error deleting the job.');
+                }
+            })
+            .catch(error => {
+                console.error('Error deleting job:', error);
+            });
+        }
+    </script>
+</body>
+</html>

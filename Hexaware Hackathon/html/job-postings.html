@@ -1,0 +1,179 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Job Posting</title>
+    <link rel="icon" type="image/x-icon" href="ByteMinds.ico">
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            padding: 0;
+            background-color: #a9a9a9;
+        }
+        h1 {
+            font-family: Georgia, 'Times New Roman', Times, serif; 
+            text-align: center;
+            font-weight: bolder;
+        }
+
+        form {
+            width: 50%;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            border: 1px solid #a9a9a9;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            background-color: #e0e0e082;
+        }
+
+        label {
+            display: block;
+            margin: 10px 0 5px;
+            font-weight: bold;
+        }
+
+        input, select, textarea {
+            width: 75%;
+            padding: 10px;
+            margin: 5px 0 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        button {
+            padding: 10px 20px;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #218838;
+        }
+
+        .message {
+            margin-top: 20px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <h1>Create Job Posting</h1>
+
+    <form id="jobForm" onsubmit="submitForm(event)" method="post">
+        <label for="jobTitle">Job Title:</label>
+        <input type="text" id="jobTitle" name="jobTitle" placeholder="Eg. Software Engineer" required>
+
+        <label for="jobDescription">Job Description:</label>
+        <textarea id="jobDescription" name="jobDescription" rows="4" placeholder="Type Here..." required></textarea>
+
+        <label for="department">Department:</label>
+        <select name="department" id="department">
+            <option value="Designing">Designing</option>
+            <option value="Financial Accounting">Financial Accounting</option>
+            <option value="Human Resources">Human Resources</option>
+            <option value="Information Technology">Information Technology</option>
+            <option value="Law">Law</option>
+            <option value="Marketing">Marketing</option>
+            <option value="Product Development">Product Development</option>
+            <option value="Project Department">Project Department</option>
+            <option value="Quality Management">Quality Management</option>
+            <option value="Engineer">Engineer</option>
+        </select>
+
+        <label for="jobLocation">Job Location:</label>
+        <input type="text" id="jobLocation" name="jobLocation" placeholder="Eg. Chennai">
+        
+        
+        <label for="employmentType">Employment Type:</label>
+        <select id="employmentType" name="employmentType" required>
+            <option value="Full-time">Full-time</option>
+            <option value="Part-time">Part-time</option>
+            <option value="Contract">Contract</option>
+            <option value="Internship">Internship</option>
+        </select>
+
+        <label for="salaryRange">Salary Range:</label>
+        <input type="text" id="salaryRange" name="salaryRange" required>
+
+        <label for="applicationDeadline">Application Deadline:</label>
+        <input type="date" id="applicationDeadline" name="applicationDeadline" required>
+
+        <label for="requiredQualifications">Required Qualifications:</label>
+        <textarea id="requiredQualifications" name="requiredQualifications" rows="3" required></textarea>
+
+        <label for="preferredQualifications">Preferred Qualifications:</label>
+        <textarea id="preferredQualifications" name="preferredQualifications" rows="3"></textarea>
+
+        <label for="responsibilities">Responsibilities:</label>
+        <textarea id="responsibilities" name="responsibilities" rows="4" required></textarea>
+
+        <label for="status">Status:</label>
+        <select id="status" name="status" required>
+            <option value="draft">Draft</option>
+            <option value="publish">Publish</option>
+        </select>
+
+        <button type="submit">Create Job</button>
+
+        <div id="responseMessage" class="message"></div>
+    </form>
+
+    <script>
+        async function submitForm(event) {
+            event.preventDefault();
+
+            const jobForm = document.getElementById('jobForm');
+            const formData = new FormData(jobForm);
+
+            const jobPosting = {
+                jobTitle: formData.get('jobTitle'),
+                jobDescription: formData.get('jobDescription'),
+                department: formData.get('department'),
+                jobLocation: formData.get('jobLocation'),
+                employmentType: formData.get('employmentType'),
+                salaryRange: parseFloat(formData.get('salaryRange')),
+                applicationDeadline: formData.get('applicationDeadline'),
+                requiredQualifications: formData.get('requiredQualifications'),
+                preferredQualifications: formData.get('preferredQualifications'),
+                responsibilities: formData.get('responsibilities'),
+                status: formData.get('status')
+            };
+
+            try {
+                const response = await fetch('http://localhost:8080/api/createJob', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(jobPosting)
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    document.getElementById('responseMessage').innerText = 'Job created successfully!';
+                    
+                    // Redirect to dashboard.html after 3 seconds
+                    setTimeout(() => {
+                        window.location.href = 'dashboard.html';
+                    }, 1000);
+                    
+                } else {
+                    document.getElementById('responseMessage').innerText = 'Error: ' + data.message;
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                document.getElementById('responseMessage').innerText = 'An error occurred while creating the job.';
+            }
+        }
+    </script>
+</body>
+</html>

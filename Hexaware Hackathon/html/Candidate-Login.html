@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <link rel="icon" type="image/x-icon" href="ByteMinds.ico">
+    
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-image: linear-gradient(rgb(58, 216, 150), rgb(88, 164, 214));
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .container {
+            background-image: linear-gradient(orange, violet);
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            width: 300px;
+            text-align: center;
+        }
+        h2 {
+            margin-bottom: 20px;
+            color: #333;
+        }
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #1b1919;
+            font-weight: bold;
+        }
+        input[type="email"],
+        input[type="password"] {
+            width: calc(100% - 22px);
+            padding: 10px;
+            margin-bottom: 20px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+            text-align: center;
+        }
+        input::placeholder {
+            color: #bbbfc2;
+            font-size: 13px;
+            font-family: serif;
+            text-align: center;
+        }
+        button {
+            width: 100%;
+            padding: 10px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: 0.8s;
+        }
+        button:hover {
+            background-color: #0056b3;
+            transform: scale(1.05);
+        }
+        a {
+            display: block;
+            margin-top: 10px;
+            color: #023264;
+            font-weight: bolder;
+            text-shadow: #1b1919;
+            text-decoration: none;
+            transition: 0.8s;
+        }
+        
+        a:hover {
+            transform: scale(1.1);
+            color: rgb(26, 24, 24);
+        }
+
+        a:active {
+            color: rgb(224, 13, 13);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="logo">
+            <img src="../images/ByteMinds.png" alt="ByteMinds" width="70" height="70">
+        </div>
+        <h2>Login</h2>
+        <form onsubmit="loginUser(event)">
+            <label for="email">Email:</label>
+            <input type="email" id="email" placeholder="Enter Email or Username" required>
+            <label for="password">Password:</label>
+            <input type="password" id="password" placeholder="Enter the Password" required>
+            <button type="submit">Login</button>
+        </form>
+        <div class="links_">
+            <a href="register.html">Sign Up</a>
+            <a href="password-recovery.html">Forgot Password?</a>
+        </div>
+    </div>
+    <script>
+        async function loginUser(event) {
+    event.preventDefault();
+    const email = document.getElementById('email').value;
+    const password = document.getElementById('password').value;
+
+    const response = await fetch('http://localhost:8080/api/login', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: new URLSearchParams({
+            'email': email,
+            'password': password
+        })
+    });
+
+    const result = await response.json();
+
+    console.log('API Response:', result);
+
+    if (response.ok && result.success) { // Check for both response and success
+        const userId = result.userId; // Extract userId
+        console.log('Extracted User ID:', userId);
+
+        // Store both userId and email in sessionStorage for later use
+        // Store userId and email in sessionStorage
+            if (userId && email) {
+                sessionStorage.setItem('userId', userId);
+                sessionStorage.setItem('email', email);
+                console.log('Stored email in sessionStorage:', email); // Log the stored value
+                console.log('Stored userId in sessionStorage:', userId); // Log the stored value
+                alert('Login successful!');
+                window.location.href = 'candidate-dashboard.html';
+            }
+
+            else {
+            alert('Login successful, but User ID or Email is missing. Please check the API.');
+        }
+    } else {
+        alert('Login failed: ' + result.message);
+    }
+}        
+    </script>
+</body>
+</html>

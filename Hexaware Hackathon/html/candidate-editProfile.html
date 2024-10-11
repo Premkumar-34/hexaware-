@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Profile - Smart Recruiting App</title>
+    <link rel="icon" type="image/x-icon" href="ByteMinds.ico">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+
+        header {
+            background: #007bff;
+            color: white;
+            padding: 15px 20px;
+            text-align: center;
+        }
+
+        nav ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        nav ul li {
+            display: inline;
+            margin: 0 15px;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+        }
+
+        .main-content {
+            padding: 20px;
+            max-width: 600px;
+            margin: 20px auto;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h2 {
+            color: #333;
+        }
+
+        p {
+            margin: 10px 0;
+        }
+
+        input[type="text"],
+        input[type="email"],
+        input[type="tel"] {
+            width: calc(100% - 20px);
+            padding: 10px;
+            margin-top: 5px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+
+        button {
+            background-color: #28a745;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-top: 10px;
+        }
+
+        button:hover {
+            background-color: #218838;
+        }
+
+        footer {
+            text-align: center;
+            padding: 15px;
+            background: #007bff;
+            color: white;
+            position: relative;
+            bottom: 0;
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Edit Profile</h1>
+        <nav>
+            <ul>
+                <li><a href="../html/home.html">Logout</a></li>
+                <li><a href="candidate-profile.html">Cancel</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main class="main-content">
+        <section class="profile">
+            <h2>Edit Personal Information</h2>
+            <p><strong>Name:</strong> <input type="text" id="user-fullName" value="Loading..."></p>
+            <p><strong>Email:</strong> <input type="email" id="user-email" value="Loading..."></p>
+            <p><strong>Phone:</strong> <input type="tel" id="user-mobileNumber" value="Loading..."></p>
+            <!-- Save Changes button -->
+            <button id="saveBtn">Save Changes</button>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2024 NextGen Recruit. All rights reserved.</p>
+    </footer>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const loggedInUserEmail = sessionStorage.getItem("email");
+            const loggedInUserId = sessionStorage.getItem("userId");
+
+            if (!loggedInUserEmail || !loggedInUserId) {
+                console.error("User email or ID is not available.");
+                return;
+            }
+
+            // Fetch existing user data
+            fetch(`http://localhost:8080/api/profile/${loggedInUserEmail}`)
+                .then(response => response.json())
+                .then(user => {
+                    if (user) {
+                        document.getElementById("user-fullName").value = user.fullName;
+                        document.getElementById("user-email").value = user.email;
+                        document.getElementById("user-mobileNumber").value = user.mobileNumber;
+                    }
+                })
+                .catch(error => console.error("Error fetching user data:", error));
+
+            // Save changes to the user profile
+            document.getElementById("saveBtn").addEventListener("click", function() {
+                const updatedUser = {
+                    fullName: document.getElementById("user-fullName").value,
+                    email: document.getElementById("user-email").value,
+                    mobileNumber: document.getElementById("user-mobileNumber").value
+                };
+
+                // Send updated data via PUT request
+                fetch(`http://localhost:8080/api/profile/update/${loggedInUserId}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(updatedUser)
+                })
+                .then(response => {
+                    if (response.ok) {
+                        alert("Profile updated successfully!");
+                        window.location.href = "candidate-profile.html"; // Navigate back to the profile page
+                    } else {
+                        alert("Error updating profile. Please try again.");
+                    }
+                })
+                .catch(error => console.error("Error updating profile:", error));
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Apply for Job</title>
+    <link rel="icon" type="image/x-icon" href="ByteMinds.ico">
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(to right, #74ebd5, #9face6);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        h1 {
+            text-align: center;
+            color: #fff;
+            font-size: 2.5rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 30px;
+        }
+
+        #applyForm {
+            background: rgba(255, 255, 255, 0.9);
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.2);
+            max-width: 500px;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+
+        label {
+            font-size: 1.2rem;
+            color: #333;
+            margin-bottom: 8px;
+        }
+
+        input[type="file"] {
+            padding: 10px;
+            font-size: 1rem;
+            margin-bottom: 20px;
+            background-color: #f0f0f0;
+            border: none;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+
+        input[type="file"]:hover {
+            background-color: #e0e0e0;
+        }
+
+        button {
+            background-color: #3498db;
+            color: #fff;
+            padding: 15px 20px;
+            font-size: 1.1rem;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.2s;
+        }
+
+        button:hover {
+            background-color: #2980b9;
+            transform: scale(1.05);
+        }
+
+        button:focus {
+            outline: none;
+            box-shadow: 0px 0px 10px rgba(52, 152, 219, 0.5);
+        }
+
+        #successMessage {
+            color: green;
+            font-size: 1.2rem;
+            margin-top: 15px;
+            display: none;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        form {
+            animation: fadeIn 0.7s ease-in-out;
+        }
+
+        @media(max-width: 768px) {
+            #applyForm {
+                padding: 30px;
+            }
+
+            h1 {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div>
+        <h1>Apply for Job</h1>
+
+        <form id="applyForm" enctype="multipart/form-data">
+            <input type="hidden" id="userId" name="userId">
+            <input type="hidden" id="jobId" name="jobId"> <!-- Set this dynamically -->
+            
+            <label for="resume">Upload Resume:</label>
+            <input type="file" id="resume" name="resume" accept=".pdf,.doc,.docx" required>
+
+            <button type="submit">Submit Application</button>
+        </form>
+
+        <div id="successMessage">Application submitted successfully!</div>
+    </div>
+
+    <script>
+        const userId = sessionStorage.getItem('userId');
+
+        if (!userId) {
+            alert('User is not logged in. Please log in to apply for the job.');
+            window.location.href = 'Candidate-Login.html'; // Redirect to login if not logged in
+        } else {
+            document.getElementById('userId').value = userId;
+        }
+
+        // Function to get query parameters from the URL
+        function getQueryParam(param) {
+            const urlParams = new URLSearchParams(window.location.search);
+            return urlParams.get(param);
+        }
+
+        // Get the job ID from the URL (e.g., ?jobId=123)
+        const jobId = getQueryParam('jobId');
+        if (jobId) {
+            document.getElementById('jobId').value = jobId; // Set jobId dynamically
+        }
+
+        document.getElementById('applyForm').addEventListener('submit', function(event) {
+            event.preventDefault(); // Prevent the default form submission
+            
+            const resume = document.getElementById('resume').files[0];
+            const formData = new FormData();
+            
+            formData.append('userId', userId);
+            formData.append('jobId', jobId);
+            formData.append('resume', resume);
+
+            submitApplication(formData);
+        });
+
+        function submitApplication(formData) {
+            fetch('http://localhost:8080/api/applications/apply', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                return response.json(); 
+            })
+            .then(data => {
+                console.log('Application submitted successfully:', data);
+                document.getElementById('successMessage').style.display = 'block';
+                setTimeout(() =>{
+                        window.location.href = 'candidate-dashboard.html';
+                    }, 1000);
+            })
+            .catch(error => {
+                console.error('Error submitting application:', error);
+            });
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,206 @@
+/* Reset some default styles */
+/* Global styles */
+body{
+    /* Background image styles */
+    background-image: url('../images/final.jpg');
+    background-size: cover;
+    background-attachment: fixed;
+    background-position: center;
+    margin: 0;
+}
+
+.row{
+    display: flex;
+    justify-content: space-evenly;
+}
+
+.box{
+    width: 1500px;
+    height: 150px;
+    text-align: center;
+    font-size: 15px;
+    border-radius: 12px;
+    transition: 1s;
+    justify-content: space-evenly;
+}
+
+.box #box1{
+    padding: 20px;
+    text-align: center;
+}
+
+.box p{
+    justify-content: left;
+}
+/*
+#box1{
+    background-image: linear-gradient(rgb(236, 111, 111),rgb(206, 123, 46));
+}
+
+#box2{
+    background-image: linear-gradient(rgb(236, 111, 111),rgb(206, 123, 46));
+}
+
+#box3{
+    background-image: linear-gradient(rgb(236, 111, 111),rgb(206, 123, 46));
+}
+
+#box1:hover{
+    transform: scale(1.1);
+    box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.2);
+}
+#box2:hover{
+    transform: scale(1.1);
+    box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.2);
+}
+#box3:hover{
+    transform: scale(1.1);
+    box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.2);
+}
+*/
+#log, #reg, #mathi, #pre {
+    /*background: #007bff; /* Background color */
+    color: #fff; 
+    padding: 10px 2px;
+    border-radius: 15px;
+    margin-left: 10px; 
+    transition: background 0.3s, transform 0.3s; 
+}
+
+
+nav ul {
+    list-style: none;
+    display: flex;
+    justify-content: space-around;
+}
+
+nav a {
+    color: #fff;
+    text-decoration: none;
+    font-size: 1.2em;
+}
+
+nav a:hover {
+    text-decoration: underline;
+    
+}
+
+/* Hero section styles */
+.hero {
+    /*background: rgba(0, 123, 255, 0.9); /* Adding a semi-transparent background */
+    color: #0f0202;
+    
+    text-align: center;
+    
+}
+
+.hero h2 {
+    color: rgb(255, 255, 255);
+    text-shadow: 0 0 3px #000000;
+    font-size: 2.5em;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.contain{
+    margin-top: 100px;
+}
+/*
+.hero p {
+    font-size: 1.2em;
+    color: aqua;
+    margin-bottom: 30px;
+    padding: 10px;
+    margin: 200px;
+    margin-top: 0px;
+    background-image: linear-gradient(rgb(57, 70, 143), rgb(199, 36, 185));
+}*/
+
+.fe{
+    padding: 20px;
+}
+
+.fe h2{
+        color: rgb(255, 255, 255);
+        text-shadow: 0 0 3px #000000;
+        font-size: 2.5em;
+        margin-bottom: 20px;
+        text-align: center;
+}
+
+.fe h3{
+    text-shadow: 2px 2white;
+    color: white;
+}
+
+.fe p{
+    color: #fff;
+    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+    justify-content:space-evenly;
+}
+
+.hero p {
+    font-size: 1.2em;
+    margin-bottom: 30px;
+}
+
+/* Features section styles */
+#features {
+    padding: 40px 0;
+    text-align: center;
+}
+
+#features h2 {
+    font-size: 2em;
+    margin-top: 2px;
+}
+
+.feature p {
+    font-size: 1.1em;
+}
+/* Center align text in the paragraph */
+#center-text {
+    text-align: justify;
+    text-shadow: #000000;
+    justify-content: space-evenly;
+}
+
+.empty{
+    padding: 50px 20px;
+}
+/* About section styles */
+#about {
+    padding-bottom: 10px;
+    padding-left: 10px;
+    margin-top: 10px;
+    margin-bottom: 20px;
+    text-align: center;
+}
+#about h2{
+    color: rgb(255, 255, 255);
+    text-shadow: 0 0 3px #000000;
+    font-size: 2.5em;
+    margin-bottom: 20px;
+    text-align: center;
+}
+#about p {
+    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+    font-size: 1.1em;
+    max-width: 800px;
+    margin: 0 auto;
+    text-align: center;
+    justify-content: center;
+    color: rgb(255, 255, 255);
+}
+
+/* Footer styles */
+footer {
+    background-image: linear-gradient(rgb(43, 43, 48),rgb(49, 80, 80));
+    color: #fff;
+    padding: 10px 0;
+    text-align: center;
+}
+
+footer p {
+    margin: 0;
+}
